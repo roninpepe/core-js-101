@@ -185,7 +185,7 @@ function isInsideCircle(circle, point) {
  */
 function findFirstSingleChar(str) {
   const chars = new Map();
-  [...str].forEach((v) => chars.set(v, (chars.get(v) ?? 0) + 1));
+  [...str].forEach((v) => chars.set(v, (chars.get(v) ? chars.get(v) : 0) + 1));
   return [...chars].find((v) => v[1] < 2) ? [...chars].find((v) => v[1] < 2)[0] : null;
 }
 

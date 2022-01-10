@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /* ************************************************************************************************
  *                                                                                                *
  * Please read the following tutorial before implementing tasks:                                   *
@@ -20,8 +21,12 @@
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-function Rectangle(/* width, height */) {
-  throw new Error('Not implemented');
+function Rectangle(width, height) {
+  return {
+    height,
+    width,
+    getArea() { return this.height * this.width; },
+  };
 }
 
 
@@ -35,8 +40,8 @@ function Rectangle(/* width, height */) {
  *    [1,2,3]   =>  '[1,2,3]'
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
-function getJSON(/* obj */) {
-  throw new Error('Not implemented');
+function getJSON(obj) {
+  return JSON.stringify(obj);
 }
 
 
@@ -51,8 +56,11 @@ function getJSON(/* obj */) {
  *    const r = fromJSON(Circle.prototype, '{"radius":10}');
  *
  */
-function fromJSON(/* proto, json */) {
-  throw new Error('Not implemented');
+function fromJSON(proto, json) {
+  const obj = JSON.parse(json);
+  // eslint-disable-next-line no-proto
+  obj.__proto__ = proto;
+  return obj;
 }
 
 
@@ -111,32 +119,99 @@ function fromJSON(/* proto, json */) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  Selector: class {
+    constructor() {
+      this.res = '';
+      this.order = 0;
+      this.error = {
+        unique: Error('Element, id and pseudo-element should not occur more then one time inside the selector'),
+        order: Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'),
+      };
+      this.test = {
+        unique: (re) => {
+          if (new RegExp(re).test(this.res)) throw this.error.unique;
+        },
+        order: (order) => {
+          if (this.order > order) throw this.error.order;
+          this.order = order;
+        },
+      };
+    }
+
+    element(value) {
+      this.test.unique('^[a-zA-Z]');
+      this.test.order(0);
+      this.res += value;
+      return this;
+    }
+
+    id(value) {
+      this.test.unique('#');
+      this.test.order(1);
+      this.res += `#${value}`;
+      return this;
+    }
+
+    class(value) {
+      this.test.order(2);
+      this.res += `.${value}`;
+      return this;
+    }
+
+    attr(value) {
+      this.test.order(3);
+      this.res += `[${value}]`;
+      return this;
+    }
+
+    pseudoClass(value) {
+      this.test.order(4);
+      this.res += `:${value}`;
+      return this;
+    }
+
+    pseudoElement(value) {
+      this.test.unique('::');
+      this.test.order(5);
+      this.res += `::${value}`;
+      return this;
+    }
+
+    stringify() {
+      return this.res;
+    }
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    return {
+      stringify() {
+        return `${selector1.stringify()} ${combinator} ${selector2.stringify()}`;
+      },
+    };
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    return new this.Selector().element(value);
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    return new this.Selector().id(value);
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    return new this.Selector().class(value);
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    return new this.Selector().attr(value);
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    return new this.Selector().pseudoClass(value);
+  },
+
+  pseudoElement(value) {
+    return new this.Selector().pseudoElement(value);
   },
 };
 

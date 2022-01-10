@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /* ************************************************************************************************
  *                                                                                                *
  * Please read the following tutorial before implementing tasks:                                   *
@@ -28,8 +29,10 @@
  *      .catch((error) => console.log(error.message)) // 'Error: Wrong parameter is passed!
  *                                                    //  Ask her again.';
  */
-function willYouMarryMe(/* isPositiveAnswer */) {
-  throw new Error('Not implemented');
+async function willYouMarryMe(isPositiveAnswer) {
+  if (isPositiveAnswer === true) return 'Hooray!!! She said "Yes"!';
+  if (isPositiveAnswer === false) return 'Oh no, she said "No".';
+  throw new Error('Wrong parameter is passed! Ask her again.');
 }
 
 
@@ -48,8 +51,8 @@ function willYouMarryMe(/* isPositiveAnswer */) {
  *    })
  *
  */
-function processAllPromises(/* array */) {
-  throw new Error('Not implemented');
+async function processAllPromises(array) {
+  return Promise.all(array);
 }
 
 /**
@@ -71,8 +74,8 @@ function processAllPromises(/* array */) {
  *    })
  *
  */
-function getFastestPromise(/* array */) {
-  throw new Error('Not implemented');
+async function getFastestPromise(array) {
+  return Promise.race(array);
 }
 
 /**
@@ -92,8 +95,10 @@ function getFastestPromise(/* array */) {
  *    });
  *
  */
-function chainPromises(/* array, action */) {
-  throw new Error('Not implemented');
+async function chainPromises(array, action) {
+  const p = Promise;
+  const results = await p.allSettled(array);
+  return results.filter((v) => v.status === 'fulfilled').map((v) => v.value).reduce(action);
 }
 
 module.exports = {
